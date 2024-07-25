@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import * as d3 from 'd3';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Use a common theme
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
@@ -13,6 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 function App() {
   const [highlightedSets, setHighlightedSets] = useState([]);
+  const [hoverSize, setHoverSize] = useState(null);
 
   const sets = useMemo(() => [
     { sets: ['WB-mRNA-1'], size: 275 },
@@ -23,6 +24,16 @@ function App() {
     { sets: ['biopsy-mRNA', 'WB-mRNA-2'], size: 1 },
     { sets: ['WB-mRNA-1', 'biopsy-mRNA', 'WB-mRNA-2'], size: 0 }
   ], []);
+
+  const urlMap = {
+    'WB-mRNA-1': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-1',
+    'WB-mRNA-2': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-2',
+    'biopsy-mRNA': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/biopsy-mRNA',
+    'WB-mRNA-1,WB-mRNA-2': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-2.&.WB-mRNA-1',
+    'WB-mRNA-2,biopsy-mRNA': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-2.&.biopsy-mRNA',
+    'WB-mRNA-1,biopsy-mRNA': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-1.&.biopsy-mRNA',
+    'WB-mRNA-1,biopsy-mRNA,WB-mRNA-2': 'https://immdatahub.jnj.com/dataexplorer/CERTIFI/WB-mRNA-1.&.biopsy-mRNA'
+  };
 
   useEffect(() => {
     // Draw Venn diagram
@@ -60,9 +71,6 @@ function App() {
         tooltip.transition().duration(400).style("opacity", .9);
         tooltip.text(d.size + " subjects");
 
-        // Log to console which sets are being hovered over
-        console.log(`Hovering over: ${d.sets.join(", ")}`);
-
         // Highlight the current path
         div.selectAll("path")
           .style("fill-opacity", function (e) {
@@ -76,8 +84,9 @@ function App() {
           .style("stroke-width", 5)  // Make the white border thicker
           .style("stroke-opacity", 1);
 
-        // Set highlighted sets for the table
+        // Set highlighted sets and hover size for the table
         setHighlightedSets(d.sets);
+        setHoverSize(d.size);
       })
       .on("mousemove", function (event) {
         tooltip.style("left", (event.pageX) + "px")
@@ -97,8 +106,17 @@ function App() {
           .style("stroke-opacity", 0)
           .style("stroke-width", 3);  // Reset to default thickness
 
-        // Reset highlighted sets for the table
+        // Reset highlighted sets and hover size for the table
         setHighlightedSets([]);
+        setHoverSize(null);
+      })
+      .on("click", function (event, d) {
+        if (!d || !d.sets) return;
+        const key = d.sets.join(',');
+        const url = urlMap[key];
+        if (url) {
+          window.location.href = url;
+        }
       });
   }, [sets]);
 
@@ -141,7 +159,8 @@ function App() {
       total: data.total,
       unique: data.unique,
       overlap: overlap,
-      isHighlighted: highlightedSets.includes(data.set)
+      isHighlighted: (highlightedSets.length === 1 && highlightedSets[0] === data.set) ||
+                     (highlightedSets.length > 1 && overlap.includes(`${highlightedSets.join(', ')}`) && parseInt(overlap.split(': ')[1]) === hoverSize)
     }));
     return overlaps;
   }).flat();
@@ -183,7 +202,7 @@ function App() {
       <div id="venn" style={{ width: '100%', height: '400px' }}></div>
       <div style={{ marginTop: '150px' }}></div>
       <div
-        className="ag-theme-quartz"
+        className="ag-theme-alpine" // Updated theme
         style={{ height: 400, width: '100%' }}
       >
         <AgGridReact
@@ -197,3 +216,4 @@ function App() {
 }
 
 export default App;
+
