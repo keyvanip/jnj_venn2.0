@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/jnj_venn2.0/static/css/main.8fe6cdbe.css",
-    "main.js": "/jnj_venn2.0/static/js/main.6ad325fe.js",
+    "main.css": "/jnj_venn2.0/static/css/main.b00f5395.css",
+    "main.js": "/jnj_venn2.0/static/js/main.422740d9.js",
     "static/js/453.dc9011c8.chunk.js": "/jnj_venn2.0/static/js/453.dc9011c8.chunk.js",
     "index.html": "/jnj_venn2.0/index.html",
-    "main.8fe6cdbe.css.map": "/jnj_venn2.0/static/css/main.8fe6cdbe.css.map",
-    "main.6ad325fe.js.map": "/jnj_venn2.0/static/js/main.6ad325fe.js.map",
+    "main.b00f5395.css.map": "/jnj_venn2.0/static/css/main.b00f5395.css.map",
+    "main.422740d9.js.map": "/jnj_venn2.0/static/js/main.422740d9.js.map",
     "453.dc9011c8.chunk.js.map": "/jnj_venn2.0/static/js/453.dc9011c8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8fe6cdbe.css",
-    "static/js/main.6ad325fe.js"
+    "static/css/main.b00f5395.css",
+    "static/js/main.422740d9.js"
   ]
 }
